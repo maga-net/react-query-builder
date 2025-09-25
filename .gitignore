@@ -1,1 +1,1 @@
-"__pycache__/\n.venv/\n.env\ndist/"
+"__pycache__/\n.venv/\n.env\ndist/\nbuild/\n.pytest_cache/"

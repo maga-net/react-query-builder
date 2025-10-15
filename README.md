@@ -2,7 +2,7 @@
 
 > **Note on Naming:** Despite the repository name, this project is a backend service, not a UI component. It simulates the architectural logic of a decentralized bridge oracle.
 
-This repository contains a Python-based simulation of a critical backend component for a cross-chain bridge: the **Event Listener and Validator Node**. This script monitors a source blockchain for specific events (e.g., `TokensLocked`), validates them, and then prepares and signs a corresponding transaction payload for a destination chain.
+This repository contains a Python-based simulation of a critical backend component for a cross-chain bridge: the **Event Listener and Validator Node**. This script monitors a source blockchain for specific events (e.g., `TokensLocked`), validates them, and then prepares and signs a corresponding message for the destination chain.
 
 ## Concept
 
@@ -12,7 +12,7 @@ Cross-chain bridges allow users to transfer assets or data from one blockchain t
 2.  **Detect**: It looks for a specific event, such as `TokensLocked`, which is emitted when a user deposits assets into the bridge contract, specifying a destination chain and recipient address.
 3.  **Confirm**: To mitigate the risk of block reorganizations (re-orgs)—where a block is temporarily orphaned and replaced—the service waits for a predefined number of `confirmation_blocks` to pass before considering an event as final.
 4.  **Validate & Attest**: Once confirmed, the service (acting as a validator) processes the event data. It creates a standardized payload containing the details of the transfer (amount, recipient, etc.) and signs it with its private key. This signature is an attestation, a verifiable proof that the event occurred on the source chain.
-5.  **Dispatch**: The signed payload is then dispatched to the destination chain. In a real system, this could be sent to a relayer network or directly submitted to a smart contract on the destination chain, which would then mint the equivalent tokens for the user.
+5.  **Dispatch**: The signed attestation is then dispatched to the destination chain. In a real system, this could be sent to a relayer network or directly submitted to a smart contract on the destination chain, which would then mint the equivalent tokens for the user.
 
 ## Code Architecture
 
@@ -52,18 +52,24 @@ The script is designed with a modular, object-oriented approach to separate conc
 
 -   `BlockchainConnector`: A wrapper around `web3.py` that manages the connection to a blockchain's RPC endpoint.
 -   `EventScanner`: The heart of the listening process. It polls the source chain for new blocks, queries for specific contract events within a block range, and waits for confirmations before flagging an event as final.
--   `TransactionProcessor`: A stateless logic class that takes a raw event log, validates its data (e.g., checks if it's intended for the correct destination chain), and transforms it into a structured, standardized payload. For example:
-    ```json
-    {
-      "source_tx_hash": "0xabc...",
-      "source_chain_id": 11155111,
-      "destination_chain_id": 80001,
-      "recipient": "0x123...",
-      "token": "0x456...",
-      "amount": "1000000000000000000"
-    }
+-   `TransactionProcessor`: A stateless logic class that takes a raw event log, validates its data (e.g., checking if it's intended for the correct destination chain), and transforms it into a structured, standardized payload.
+
+    *Conceptual Example:*
+    ```python
+    def process_event(event_log):
+        # Simplified logic
+        args = event_log['args']
+        if args['destinationChainId'] != SUPPORTED_DEST_CHAIN_ID:
+            return None
+
+        return {
+            "source_tx_hash": event_log['transactionHash'].hex(),
+            "recipient": args['recipientAddress'],
+            "amount": str(args['amount']),
+            # ... and other fields
+        }
     ```
--   `CrossChainDispatcher`: Simulates the validator's role. It takes the processed payload, signs it using a private key, and dispatches the signed message. In this simulation, it sends the data to a mock API endpoint.
+-   `CrossChainDispatcher`: Simulates the validator's role. It takes the processed payload, signs it using a private key, and dispatches the signed message. In this simulation, it sends the signed data to a mock API endpoint.
 -   `BridgeOrchestrator`: The top-level class that initializes and wires together all other components. It runs the main asynchronous loop, controlling the flow from scanning to dispatching.
 
 ## How It Works
@@ -121,7 +127,11 @@ Clone the repository and install the required dependencies.
 git clone https://github.com/your-username/react-query-builder.git
 cd react-query-builder
 
-# 2. Install dependencies
+# 2. Create and activate a virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+
+# 3. Install dependencies
 pip install -r requirements.txt
 ```
 

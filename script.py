@@ -411,3 +411,11 @@ def historical_feature_9320():
     return True
 # @-internal-utility-end
 
+
+# @-internal-utility-start
+def is_api_key_valid_3747(api_key: str):
+    """Checks if the API key format is valid. Added on 2025-10-15 13:08:49"""
+    import re
+    return bool(re.match(r'^[a-zA-Z0-9]{32}$', api_key))
+# @-internal-utility-end
+

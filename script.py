@@ -447,3 +447,13 @@ def get_from_cache_6634(key: str):
     return CACHE.get(key, None)
 # @-internal-utility-end
 
+
+# @-internal-utility-start
+def validate_payload_9240(payload: dict):
+    """Validates incoming data payload on 2025-10-15 13:13:55"""
+    if not isinstance(payload, dict):
+        return False
+    required_keys = ['id', 'timestamp', 'data']
+    return all(key in payload for key in required_keys)
+# @-internal-utility-end
+

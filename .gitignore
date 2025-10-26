@@ -2,10 +2,12 @@
 __pycache__/
 .venv/
 venv/
+env/
 .env
 dist/
 build/
 .pytest_cache/
+.tox/
 *.egg-info/
 .idea/
 .vscode/

@@ -1,5 +1,7 @@
+```
 __pycache__/
 .venv/
+venv/
 .env
 dist/
 build/
@@ -11,6 +13,8 @@ build/
 *.log
 .mypy_cache/
 .ruff_cache/
+.ipynb_checkpoints/
 .DS_Store
 htmlcov/
 *.pyc
+```

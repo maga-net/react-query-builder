@@ -12,7 +12,7 @@ Cross-chain bridges allow users to transfer assets or data from one blockchain t
 2.  **Detect**: It looks for a specific event, such as `TokensLocked`, which is emitted when a user deposits assets into the bridge contract, specifying a destination chain and recipient address.
 3.  **Confirm**: To mitigate the risk of block reorganizations (re-orgs)—where a block is temporarily orphaned and replaced—the service waits for a predefined number of `confirmation_blocks` to pass before considering an event as final.
 4.  **Validate & Attest**: Once confirmed, the service (acting as a validator) processes the event data. It creates a standardized payload containing the details of the transfer (amount, recipient, etc.) and signs it with its private key. This signature is an attestation, a verifiable proof that the event occurred on the source chain.
-5.  **Dispatch**: The signed attestation is then dispatched to the destination chain. In a real system, this could be sent to a relayer network or directly submitted to a smart contract on the destination chain, which would then mint the equivalent tokens for the user.
+5.  **Dispatch**: The signed attestation is then dispatched to the destination chain. In a real system, this could be sent to a relayer network or submitted directly to a smart contract on the destination chain, which would then mint the equivalent tokens for the user.
 
 ## Code Architecture
 
@@ -70,7 +70,7 @@ The script is designed with a modular, object-oriented approach to separate conc
         }
     ```
 -   `CrossChainDispatcher`: Simulates the validator's role. It takes the processed payload, signs it using a private key, and dispatches the signed message. In this simulation, it sends the signed data to a mock API endpoint.
--   `BridgeOrchestrator`: The top-level class that initializes and wires together all other components. It runs the main asynchronous loop, controlling the flow from scanning to dispatching.
+-   `BridgeOrchestrator`: The top-level class that initializes and integrates all other components. It runs the main asynchronous loop, controlling the flow from scanning to dispatching.
 
 ## How It Works
 
@@ -115,8 +115,8 @@ When a user locks tokens, this event is emitted, and its data becomes the input 
 ### 1. Prerequisites
 
 -   Python 3.8+
--   An RPC URL for a source EVM-compatible chain (e.g., from Infura or Alchemy for Sepolia testnet).
--   A private key for the account that will act as the validator. **Do not use a key with real funds for this simulation.**
+-   An RPC URL for an EVM-compatible source chain (e.g., from Infura or Alchemy for Sepolia testnet).
+-   A private key for the account that will act as the validator. **Use a burner account with no real funds.**
 
 ### 2. Installation
 
@@ -127,7 +127,7 @@ Clone the repository and install the required dependencies.
 git clone https://github.com/your-username/react-query-builder.git
 cd react-query-builder
 
-# 2. Create and activate a virtual environment (recommended)
+# 2. Create and activate a virtual environment (optional but recommended)
 python -m venv venv
 source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 
@@ -145,12 +145,12 @@ Create a `.env` file in the root of the project directory and add your configura
 # RPC URL for the blockchain you want to listen to (e.g., Ethereum Sepolia)
 SOURCE_CHAIN_RPC_URL="https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID"
 
-# (Optional) Address of the bridge contract to monitor on the source chain.
-# Defaults to a well-known contract on Sepolia for demonstration purposes.
-SOURCE_BRIDGE_CONTRACT="0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+# Address of the bridge contract to monitor on the source chain.
+# If not set, the script uses a default address on Sepolia for demonstration.
+SOURCE_BRIDGE_CONTRACT="0x_your_bridge_contract_address_here"
 
-# Private key of the account that will sign the attestations. 
-# MUST start with 0x. USE A BURNER ACCOUNT.
+# Private key of the account that will sign the attestations.
+# MUST start with 0x. USE A BURNER ACCOUNT WITH NO REAL FUNDS.
 VALIDATOR_PRIVATE_KEY="0x_your_burner_private_key_here"
 ```
 
@@ -168,11 +168,11 @@ The script will start, connect to the source chain, and begin scanning for event
 # Example Output
 2023-10-27 15:30:00 - BridgeOrchestrator - [INFO] - Initializing Bridge Orchestrator...
 2023-10-27 15:30:01 - BlockchainConnector - [INFO] - Successfully connected to Ethereum-Sepolia (Chain ID: 11155111).
-2023-10-27 15:30:01 - EventScanner - [INFO] - Initializing bridge contract on Ethereum-Sepolia at 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+2023-10-27 15:30:01 - EventScanner - [INFO] - Initializing bridge contract on Ethereum-Sepolia at 0x...
 2023-10-27 15:30:01 - TransactionProcessor - [INFO] - TransactionProcessor initialized for source 11155111 -> dest Polygon-Mumbai
 2023-10-27 15:30:01 - CrossChainDispatcher - [INFO] - Dispatcher initialized with validator address: 0x...
 2023-10-27 15:30:01 - BridgeOrchestrator - [INFO] - Bridge Event Listener service starting.
 2023-10-27 15:30:02 - EventScanner - [INFO] - Scanning Ethereum-Sepolia from block 4851200 to 4851210...
 2023-10-27 15:30:04 - BridgeOrchestrator - [INFO] - No new confirmed events found. Waiting for 10 seconds.
-... 
+...
 ```

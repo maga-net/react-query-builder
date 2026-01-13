@@ -130,7 +130,7 @@ cd react-query-builder
 
 # 2. Create and activate a virtual environment (optional but recommended)
 python -m venv venv
-source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # 3. Install dependencies
 pip install -r requirements.txt
@@ -138,7 +138,7 @@ pip install -r requirements.txt
 
 ### 3. Configuration
 
-Create a `.env` file in the root of the project directory and add your configuration details. This file is ignored by Git to protect your secrets.
+Create a `.env` file in the project root and add your configuration details. This file is ignored by Git to protect your secrets.
 
 ```dotenv
 # .env file

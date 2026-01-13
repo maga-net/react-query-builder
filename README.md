@@ -1,3 +1,4 @@
+```markdown
 # React Query Builder - Cross-Chain Bridge Event Listener
 
 > **Note on Naming:** Despite the repository name, this project is a backend service, not a UI component. It simulates the architectural logic of a decentralized bridge oracle.
@@ -88,7 +89,7 @@ The script is designed with a modular, object-oriented approach to separate conc
 
 5.  **Dispatching**:
     -   The valid payload is passed to the `CrossChainDispatcher`.
-    -   The dispatcher serializes the payload into a standard format, hashes it (using Keccak-256), and signs the resulting hash with the validator's private key.
+    -   The dispatcher serializes the payload into a standard format, hashes it using Keccak-256, and signs the resulting hash with the validator's private key.
     -   The signed message is then sent to a mock API endpoint to simulate the completion of the cross-chain communication leg.
 
 6.  **Repeat**: The orchestrator pauses for a configured interval (`poll_interval_seconds`) and then repeats the loop.
@@ -115,7 +116,7 @@ When a user locks tokens, this event is emitted, and its data becomes the input 
 ### 1. Prerequisites
 
 -   Python 3.8+
--   An RPC URL for an EVM-compatible source chain (e.g., from Infura or Alchemy for Sepolia testnet).
+-   An RPC URL for an EVM-compatible source chain (e.g., from Infura or Alchemy for Sepolia testnet)
 -   A private key for the account that will act as the validator. **Use a burner account with no real funds.**
 
 ### 2. Installation
@@ -164,8 +165,8 @@ python script.py
 
 The script will start, connect to the source chain, and begin scanning for events. The console will show detailed log output of its operations.
 
+**Example Output:**
 ```text
-# Example Output
 2023-10-27 15:30:00 - BridgeOrchestrator - [INFO] - Initializing Bridge Orchestrator...
 2023-10-27 15:30:01 - BlockchainConnector - [INFO] - Successfully connected to Ethereum-Sepolia (Chain ID: 11155111).
 2023-10-27 15:30:01 - EventScanner - [INFO] - Initializing bridge contract on Ethereum-Sepolia at 0x...
@@ -175,4 +176,5 @@ The script will start, connect to the source chain, and begin scanning for event
 2023-10-27 15:30:02 - EventScanner - [INFO] - Scanning Ethereum-Sepolia from block 4851200 to 4851210...
 2023-10-27 15:30:04 - BridgeOrchestrator - [INFO] - No new confirmed events found. Waiting for 10 seconds.
 ...
+```
 ```
